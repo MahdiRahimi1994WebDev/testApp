@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import "./App.css";
+import Album from "./components/Album";
+import RandomNumber from "./components/RandomNumber";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [greeting, setGreeting] = useState("");
+  const [selectedName, setSelectedName] = useState("Abbas");
+  useEffect(() => {
+    handleGreeting(selectedName);
+  }, [selectedName]);
 
+  const handleGreeting = async () => {
+    const result = await fetch("http://localhost:7007/greeting", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ name: selectedName }),
+    });
+    const text = await result.text();
+    setGreeting(text);
+  };
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <select onChange={(e) => setSelectedName(e.target.value)}>
+        <option value="Ali">Ali</option>
+        <option value="Hassan">Hassan</option>
+        <option value="Hossein">Hossein</option>
+      </select>
+      <h2>{greeting}</h2>
+      <Album />
+      <RandomNumber />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
